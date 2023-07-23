@@ -14,6 +14,7 @@ def club_serializer(club) -> dict:
 		"classification": club["classification"],
 		"last_updated": club["last_updated"],
 	}
+ 
 
 def clubs_serializer(clubs) -> list:
 	return [club_serializer(club) for club in clubs]

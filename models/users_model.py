@@ -13,5 +13,6 @@ class User(BaseModel):
     major: str
     student_number: str
     phone_number: str
+    interests: list[dict] #관심있는 동아리
 
 

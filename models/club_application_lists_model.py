@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 
-
 class ClubApplicationList(BaseModel):
     realname: str
     content: str

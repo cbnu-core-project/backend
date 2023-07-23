@@ -1,4 +1,4 @@
-from config.database import collection_club, collection_notice
+from config.database import collection_club, collection_notice, collection_user
 from schemas.clubs_schema import clubs_serializer
 from schemas.users_schema import users_serializer
 from schemas.others_schema import others_serializer
@@ -24,7 +24,10 @@ def club_migrate():
     collection_club.update_many({}, {"$rename": { "content": "sub_content"}})
     # collection_club.update_many({}, {"$currentDate": { "last_updated": True}})
 
+def users_migrate():
+    collection_user.update_many({}, {"$set": {"interests": []}})
 
 
 if __name__ == "__main__":
     pass
+
