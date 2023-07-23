@@ -15,11 +15,16 @@ class UnauthorizedMessage(BaseModel):
 async def verify_and_get_kakao_token(
     auth: t.Optional[HTTPAuthorizationCredentials] = Depends(get_bearer_token),
 ) -> str:
-	print(auth)
+	if auth is None:
+		raise HTTPException(
+			status_code=status.HTTP_401_UNAUTHORIZED,
+			detail=UnauthorizedMessage().detail,
+		)
+
 	token = auth.credentials
 	headers = {'Authorization': 'Bearer ' + token }
 	response = requests.get('https://kapi.kakao.com/v1/user/access_token_info', headers=headers)
-	if auth is None or not(response.ok):
+	if not(response.ok):
 		raise HTTPException(
 			status_code=status.HTTP_401_UNAUTHORIZED,
 			detail=UnauthorizedMessage().detail,
