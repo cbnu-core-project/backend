@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 # 라우터
-from routers import clubs, notices, promotions, files, schedules, club_active_records, club_activity_history, club_programs,users, club_application_form
+from routers import clubs, notices, promotions, files, schedules, club_active_records, club_activity_history, club_programs,users, club_application_form, club_faq
 from routers.oauth import kakao_oauth, naver_oauth
 
 
@@ -42,6 +42,7 @@ app.include_router(naver_oauth.router)
 app.include_router(users.router)
 app.include_router(club_activity_history.router)
 app.include_router(club_programs.router)
+app.include_router(club_faq.router)
 app.include_router(club_application_form.router)
 
 
