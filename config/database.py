@@ -3,15 +3,20 @@ from bson import ObjectId
 import certifi
 from pydantic.json import ENCODERS_BY_TYPE
 
-################################################################
-ENCODERS_BY_TYPE[ObjectId] = str
-
+# .env 환경변수 설정
+from dotenv import load_dotenv, find_dotenv
+import os
+dotenv_file = find_dotenv()
+load_dotenv(dotenv_file)
 
 # mongodb 보안에러 해결을 위한 패키지
 ca = certifi.where()
 
+################################################################
+ENCODERS_BY_TYPE[ObjectId] = str
+
 client = pymongo.MongoClient(
-	"mongodb+srv://apple825:aa04190825@cluster0.amq3ff3.mongodb.net/?retryWrites=true&w=majority",
+	os.environ.get("MONGODB_URI"),
 	tlsCAFile=ca
 )
 

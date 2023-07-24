@@ -6,11 +6,18 @@ from enums.enums import SocialEnum
 from schemas.others_schema import others_serializer
 from utils.naver_token import verify_and_get_naver_token
 
-NAVER_CLIENT_ID = "zB5gfqdBq1a0jq6vr_zv";
-NAVER_CLIENT_SECRET = "X8C0M1JHIH"
-NAVER_REDIRECT_URI = "http://localhost:3000";
-NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
+# .env 환경변수 설정
+from dotenv import load_dotenv, find_dotenv
+import os
+dotenv_file = find_dotenv()
+load_dotenv(dotenv_file)
 
+NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET")
+NAVER_REDIRECT_URI = os.environ.get("NAVER_REDIRECT_URI")
+
+
+NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
 # + code 랑 같이 쓰여야 됨
 NAVER_GET_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&state=naver&code="
 
