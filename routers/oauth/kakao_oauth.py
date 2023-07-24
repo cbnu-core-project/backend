@@ -9,12 +9,20 @@ from enums.enums import SocialEnum
 from schemas.others_schema import others_serializer
 from utils.kakao_token import verify_and_get_kakao_token
 
-REST_API_KEY = "40d478c8d7447b20143b402959fd7ed8";
-REDIRECT_URI = "http://localhost:3000";
-KAKAO_USERINFO_URL = 'https://kapi.kakao.com/v2/user/me'
+# .env 환경변수 설정
+from dotenv import load_dotenv, find_dotenv
+import os
+dotenv_file = find_dotenv()
+load_dotenv(dotenv_file)
 
+
+KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
+KAKAO_REDIRECT_URI = os.environ.get('KAKAO_REDIRECT_URI')
+
+
+KAKAO_USERINFO_URL = 'https://kapi.kakao.com/v2/user/me'
 # + code 랑 같이 쓰여야 됨
-KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&redirect_uri={REDIRECT_URI}&code="
+KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI}&code="
 
 router = APIRouter(
 	tags=["kakao_oauth"]
