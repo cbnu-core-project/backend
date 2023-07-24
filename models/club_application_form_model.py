@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from datetime import datetime
 
 class _Question(BaseModel):
     type: str
@@ -11,6 +11,8 @@ class ClubApplicationForm(BaseModel):
     content: str
     club_objid: str
     club_name:str
+    deadline: datetime
+    announcement_of_acceptance: datetime
 
     # 받아들일 항목 여부 bool / 기본필수
     realname: bool
