@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-
 class _Question(BaseModel):
     type: int
     required: bool
@@ -12,7 +11,7 @@ class ClubApplicationForm(BaseModel):
     title: str
     content: str
     club_objid: str
-    club_name: str
+    club_name:str
     deadline: datetime
     announcement_of_acceptance: datetime
 

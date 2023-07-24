@@ -1,4 +1,4 @@
-from config.database import collection_club, collection_notice, collection_user
+from config.database import collection_club, collection_notice, collection_user, collection_club_application_submit
 from schemas.clubs_schema import clubs_serializer
 from schemas.users_schema import users_serializer
 from schemas.others_schema import others_serializer
@@ -26,8 +26,10 @@ def club_migrate():
 
 def users_migrate():
     collection_user.update_many({}, {"$set": {"interests": []}})
-
+    
+def club_application_submit_migrate():
+    collection_club_application_submit.update_one({},{"$set": {"user_objid": ""}})
 
 if __name__ == "__main__":
-    pass
+    club_application_submit_migrate()
 
