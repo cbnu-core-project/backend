@@ -20,15 +20,19 @@ KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
 KAKAO_REDIRECT_URI = os.environ.get('KAKAO_REDIRECT_URI')
 KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=refresh_token&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI}&refresh_token="
 KAKAO_USERINFO_URL = 'https://kapi.kakao.com/v2/user/me'
+KAKAO_LOGOUT_URL = 'https://kapi.kakao.com/v1/user/logout'
 
 NAVER_CLIENT_ID = os.environ.get('NAVER_CLIENT_ID')
 NAVER_CLIENT_SECRET = os.environ.get('NAVER_CLIENT_SECRET')
 NAVER_REDIRECT_URI = os.environ.get('NAVER_REDIRECT_URI')
 NAVER_GET_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=refresh_token&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&refresh_token="
 NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
+NAVER_DELETE_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&service_provider=NAVER&access_token="
+
 
 class UnauthorizedMessage(BaseModel):
-	detail: str = "유효하지 않는 토큰이다."
+    detail: str = "유효하지 않는 토큰이다."
+
 
 def verify_common_token_and_get_unique_id(
     auth: t.Optional[HTTPAuthorizationCredentials] = Depends(get_bearer_token),
@@ -38,11 +42,11 @@ def verify_common_token_and_get_unique_id(
     if auth is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=UnauthorizedMessage().detail,
+            detail="토큰이 존재하지 않습니다.",
         )
 
     token = auth.credentials
-    headers = {'Authorization': 'Bearer ' + token }
+    headers = {'Authorization': 'Bearer ' + token}
 
     # 토큰 검증 (1. 카카오)
     response = requests.get(KAKAO_USERINFO_URL, headers=headers)
@@ -58,31 +62,66 @@ def verify_common_token_and_get_unique_id(
 
     # 토큰이 유효하지 않다면 401
     raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=UnauthorizedMessage().detail,
-        )
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="토큰이 유효하지 않습니다.",
+    )
+
 
 def verify_common_refresh_token_and_create_access_token(refresh_token):
     # refresh_token을 이용한 access_token 재발급
-
+    if refresh_token == None:
+        raise HTTPException(status_code=401, detail="토큰이 없습니다.")
 
     # 토큰 검증 (1. 카카오)
-    kakao_headers = {'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'}
-    response = requests.get(KAKAO_GET_TOKEN_URL + refresh_token, headers=kakao_headers)
+    kakao_headers = {
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'}
+    response = requests.get(KAKAO_GET_TOKEN_URL +
+                            refresh_token, headers=kakao_headers)
     if response.ok:
         new_kakao_access_token = response.json().get('access_token')
         print(response.json().get('expires_in'))
-        return new_kakao_access_token
+        if new_kakao_access_token != None:
+            return new_kakao_access_token
 
     # 토큰 검증 (2. 네이버)
     response = requests.get(NAVER_GET_TOKEN_URL + refresh_token)
     if response.ok:
         new_naver_access_token = response.json().get('access_token')
         print(response.json().get('expires_in'))
-        return new_naver_access_token
+        if new_naver_access_token != None:
+            return new_naver_access_token
 
     # 토큰이 유효하지 않다면 401
     raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=UnauthorizedMessage().detail,
-        )
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail=UnauthorizedMessage().detail,
+    )
+
+# 헤더를 통해 읽어와서 로그아웃 (Depend)
+
+
+def common_header_access_token_logout(auth: t.Optional[HTTPAuthorizationCredentials] = Depends(get_bearer_token)):
+    token = auth.credentials
+    headers = {'Authorization': 'Bearer ' + token}
+
+    # 1. 카카오 로그아웃
+    response = requests.post(KAKAO_LOGOUT_URL, headers=headers)
+
+    # 2. 네이버 로그아웃
+    response = requests.post(NAVER_DELETE_TOKEN_URL + token)
+
+    return "access_token 만료 처리"
+
+# 파라미터로 받아서 로그아웃
+
+
+def common_access_token_logout(access_token: str):
+    headers = {'Authorization': 'Bearer ' + access_token}
+
+    # 1. 카카오 로그아웃
+    response = requests.post(KAKAO_LOGOUT_URL, headers=headers)
+
+    # 2. 네이버 로그아웃
+    response = requests.post(NAVER_DELETE_TOKEN_URL + access_token)
+
+    return "access_token 만료 처리"
