@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class _Question(BaseModel):
-    type: str
+    type: int
     required: bool
     question: str
 
@@ -12,12 +12,13 @@ class ClubApplicationForm(BaseModel):
     club_objid: str
     club_name:str
 
-    # 받아들일 항목 여부 bool / 기본필수
+    # 받아들일 항목(보여줄) 여부 bool / 기본필수
     realname: bool
     department: bool
     school_number: bool
 
-    # 받아들일 항목 여부 bool / 필수여부(required) bool -> [bool, bool]
+    # 받아들일 항목(보여줄) 여부 bool / 필수여부(required) bool
+    # -> [bool, bool] 형태로 만들어야 함
     gender: list[bool]
     phone_number: list[bool]
     email: list[bool]
