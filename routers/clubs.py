@@ -111,3 +111,8 @@ async def delete_club(objid: str):
 def push_image_url(club_objid: str, image_url: str):
 	collection_club.update_one({"_id": ObjectId(club_objid)}, { "$push" : { "image_urls": image_url}})
 	return "push success"
+
+@router.put("/api/club/image/update", description="쿼리파라미터로, 수정할 club의 objid랑, 대체할 image_url 주기")
+def push_image_url(club_objid: str, image_url: str):
+	collection_club.update_one({"_id": ObjectId(club_objid)}, { "$set" : { "image_urls": [image_url]}})
+	return "image update success"
