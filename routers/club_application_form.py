@@ -36,7 +36,7 @@ def create_club_application_form(club_application_form: ClubApplicationForm):
 
 	return inserted_data
 
-@router.put('/api/club_application_form/{objid}')
+@router.put('/api/club_application_form/{objid}', description="폼 고유의 objid를 통한 수정")
 def update_club_application_form(objid: str, club_application_form: ClubApplicationForm):
 	club_application_form = dict(club_application_form)
 
@@ -49,6 +49,22 @@ def update_club_application_form(objid: str, club_application_form: ClubApplicat
 
 	# 수정하기
 	collection_club_application_form.update_one({"_id": ObjectId(objid)}, {"$set": club_application_form})
+
+	return "수정 완료"
+
+@router.put('/api/club_application_form/{club_objid}', description="동아리의 objid 를 통해 폼 수정")
+def update_club_application_form(club_objid: str, club_application_form: ClubApplicationForm):
+	club_application_form = dict(club_application_form)
+
+	# 리스트를 쓸 수 있게 가공하기
+	questions = club_application_form["questions"]
+	new_questions = [dict(question) for question in questions]
+
+	# 새로 pymongo에서 쓸 수 있게 가공된 리스트로 대체
+	club_application_form['questions'] = new_questions
+
+	# 수정하기
+	collection_club_application_form.update_one({"club_objid": club_objid}, {"$set": club_application_form})
 
 	return "수정 완료"
 

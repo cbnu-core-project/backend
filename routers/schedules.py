@@ -27,7 +27,7 @@ def verify_schedule_management_authority(club_objid, user):
 
 
 
-@router.get('/api/user/schedule')
+@router.get('/api/user/schedule', description="날짜(start_datetime) 순서대로 정렬해서 데이터를 가져옴")
 def get_user_schedule(unique_id: str = Depends(verify_common_token_and_get_unique_id)):
     user = others_serializer(collection_user.find({"unique_id": unique_id}))[0]
     # 토큰이 유효하면 밑에 실행
@@ -37,7 +37,7 @@ def get_user_schedule(unique_id: str = Depends(verify_common_token_and_get_uniqu
     query = {"$or": [{"club_objid": club} for club in clubs]}
 
     # 검색하기
-    results = schedules_serializer(collection_schedule.find(query))
+    results = schedules_serializer(collection_schedule.find(query).sort("start_datetime", 1))
 
     return results
 
