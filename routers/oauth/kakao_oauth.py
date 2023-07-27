@@ -64,7 +64,7 @@ def kakao_user_register(user):
 								"social": social,
 								"clubs": [],
 								"refresh_token": "",
-								"authority": 4,
+								"authority": 1,
 								"major": "",
 								"student_number": "",
 								"phone_number": "",
