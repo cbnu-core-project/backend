@@ -14,3 +14,8 @@ class Club(BaseModel):
 	tag3: str
 	classification: int
 	last_updated: datetime | None = None
+
+	# 권한 회장/임원/일반
+	president: list[str]
+	executive: list[str]
+	member: list[str]

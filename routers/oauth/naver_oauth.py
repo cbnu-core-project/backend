@@ -62,10 +62,11 @@ def user_register(user):
 								"social": social,
 								"clubs": [],
 								"refresh_token": "",
-								"authority": 4,
 								"major": "",
 								"student_number": "",
 								"phone_number": "",
+								"interests": [],
+								"admin": False
 								})
 	return True
 
