@@ -13,6 +13,7 @@ class Schedule(BaseModel):
 	title: str
 	content: str
 	place: str
+	users: list[str] # 참여하는 유저의 objid 리스트
 	start_datetime: datetime.datetime
 	end_datetime: datetime.datetime
 

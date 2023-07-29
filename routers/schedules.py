@@ -41,6 +41,17 @@ def get_user_schedule(unique_id: str = Depends(verify_common_token_and_get_uniqu
 
     return results
 
+@router.get('/api/user/schedule/club_objid/{club_objid}', description="동아리별 날짜(start_datetime) 순서대로 정렬해서 데이터를 가져옴")
+def get_user_schedule(club_objid: str):
+
+    # 검색 조건 설정
+    query = {"club_objid": club_objid}
+
+    # 검색하기
+    results = schedules_serializer(collection_schedule.find(query).sort("start_datetime", 1))
+
+    return results
+
 @router.post('/api/user/schedule')
 def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
     schedule_dict = dict(schedule)

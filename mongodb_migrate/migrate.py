@@ -1,4 +1,4 @@
-from config.database import collection_club, collection_notice, collection_user, collection_club_application_submit
+from config.database import collection_club, collection_notice, collection_user, collection_schedule, collection_club_application_submit
 from schemas.clubs_schema import clubs_serializer
 from schemas.users_schema import users_serializer
 from schemas.others_schema import others_serializer
@@ -30,6 +30,9 @@ def users_migrate():
 def club_application_submit_migrate():
     collection_club_application_submit.update_one({},{"$set": {"user_objid": ""}})
 
+def schedule_migrate():
+    collection_schedule.update_many({}, {"$set": {"users": ["64ba1a1fd2d5e9671f8e07bc", "64be3b2d8f83d5c67de006e7", "64c22f6cd3a8a5f2797449b4" ]}})
+
 if __name__ == "__main__":
-    club_application_submit_migrate()
+    schedule_migrate()
 

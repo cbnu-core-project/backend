@@ -49,6 +49,33 @@ def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token
 
     return "push"
 
+# 현재 유저가 속한 관심동아리 리스트 가져오기
+@router.get("/api/user/interests")
+def get_user_clubs(unique_id: str = Depends(verify_common_token_and_get_unique_id)):
+    user = others_serializer(collection_user.find({"unique_id": unique_id}))[0]
+    interests = user.get("interests")
+
+    return interests
+
+# 유저 관심동아리 리스트에 관심동아리 1개 추가하기
+@router.post("/api/user/interest/push", description="유저 관심동아리 리스트에 관심동아리 1개 추가 / except: 이미 존재하고 있는 관심동아리라면, 400실패를 보냄")
+def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
+    user = others_serializer(collection_user.find({"unique_id": unique_id}))[0]
+    if (club_objid in user.get('interests')):
+        raise HTTPException(status_code=400, detail="이미 존재하는 동아리 입니다.")
+    collection_user.update_one({"unique_id": unique_id}, {
+                               "$push": {"interests": club_objid}})
+
+    return "push"
+
+# 유저 관심동아리 삭제
+@router.delete("/api/user/interest/delete/{club_objid}", description="관심동아리의 club_objid를 보내주면 그것을 삭제 (인덱스x)")
+def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
+    collection_user.update_one({"unique_id": unique_id}, {
+                               "$pull": {"interests": club_objid}})
+
+    return "delete"
+
 
 class RefreshToken(BaseModel):
     refresh_token: str
