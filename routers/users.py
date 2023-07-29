@@ -110,3 +110,18 @@ def access_token_logout(token: AccessToken):
 @router.post("/api/header/access_token/logout")
 def common_logout(message: str = Depends(common_header_access_token_logout)):
     return "로그아웃"
+
+
+class Users(BaseModel):
+    users: list[str]
+
+@router.post("/api/user/info/user_objid_list", description="유저 objid(list[str]) 리스트를 보내면, 유저 정보가 담긴 리스트로 바꿔 줌")
+def get_users_info_from_users_list(users: Users):
+    users = dict(users).get('users')
+
+    # 검색 조건 설정
+    query = {"$or": [{"_id": ObjectId(user)} for user in users]}
+
+    results = others_serializer(collection_user.find(query))
+
+    return results

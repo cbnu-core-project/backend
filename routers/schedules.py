@@ -5,6 +5,7 @@ from schemas.others_schema import others_serializer
 from config.database import collection_schedule, collection_user
 from models.schedules_model import Schedule
 from utils.common_token import verify_common_token_and_get_unique_id
+from pydantic import BaseModel
 
 router = APIRouter(
     tags=["schedules"]
@@ -40,6 +41,7 @@ def get_user_schedule(unique_id: str = Depends(verify_common_token_and_get_uniqu
     results = schedules_serializer(collection_schedule.find(query).sort("start_datetime", 1))
 
     return results
+
 
 @router.get('/api/user/schedule/club_objid/{club_objid}', description="동아리별 날짜(start_datetime) 순서대로 정렬해서 데이터를 가져옴")
 def get_user_schedule(club_objid: str):
