@@ -64,10 +64,11 @@ def kakao_user_register(user):
 								"social": social,
 								"clubs": [],
 								"refresh_token": "",
-								"authority": 1,
 								"major": "",
 								"student_number": "",
 								"phone_number": "",
+								"interests": [],
+								"admin": False
 								})
 	return True
 

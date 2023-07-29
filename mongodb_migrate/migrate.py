@@ -20,19 +20,21 @@ def notice_conversion():
         collection_notice.update_one({"_id": notice.get("_id")}, { "$currentDate": {"last_updated": True}})
 
 def club_migrate():
-    collection_club.update_many({}, {"$set": { "main_content": ""}})
-    collection_club.update_many({}, {"$rename": { "content": "sub_content"}})
+    collection_club.update_many({}, {"$set": { "president": []}})
+    collection_club.update_many({}, {"$set": { "executive": []}})
+    collection_club.update_many({}, {"$set": { "member": []}})
+    # collection_club.update_many({}, {"$rename": { "content": "sub_content"}})
     # collection_club.update_many({}, {"$currentDate": { "last_updated": True}})
 
 def users_migrate():
-    collection_user.update_many({}, {"$set": {"interests": []}})
+    collection_user.update_many({}, {"$set": {"admin": True}})
     
 def club_application_submit_migrate():
     collection_club_application_submit.update_one({},{"$set": {"user_objid": ""}})
 
 def schedule_migrate():
-    collection_schedule.update_many({}, {"$set": {"users": ["64ba1a1fd2d5e9671f8e07bc", "64be3b2d8f83d5c67de006e7", "64c22f6cd3a8a5f2797449b4" ]}})
+    collection_schedule.update_many({}, {"$set": {"users": ["64ba1a1fd2d5e9671f8e07bc", "64be3b2d8f83d5c67de006e7", "64c22f6cd3a8a5f2797449b4", "64bb9cb3e5723a73730bfb63" ]}})
 
 if __name__ == "__main__":
-    schedule_migrate()
+    club_migrate()
 
