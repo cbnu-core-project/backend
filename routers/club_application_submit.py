@@ -31,7 +31,7 @@ def create_club_application_submit(club_application_submit: ClubApplicationSubmi
 	
     # 유저가 동일한 동아리에 2개의 신청서를 놓지 못하도록 처리
     if((user_objid_data) and (club_objid_data)):
-        raise HTTPException(status_code=400, detail="이미 양식을 제출했습니다. 기존 양식을 수정하거나 삭제 후 다시 써 주세요.")
+        raise HTTPException(status_code=400, detail={"message": "이미 양식을 제출했습니다. 기존 양식을 수정하거나 삭제 후 다시 써 주세요."})
 
 	# 리스트를 쓸 수 있게 가공하기
     questions = club_application_submit["questions"]
@@ -60,10 +60,10 @@ def update_club_application_form(objid: str, club_application_submit: ClubApplic
 	# 수정하기
 	collection_club_application_submit.update_one({"_id": ObjectId(objid)}, {"$set": club_application_submit})
 
-	return "수정 완료"
+	return {"message": "수정 완료"}
 
 @router.delete('/api/club_application_submit/{objid}')
 def delete_club_application_submit(objid: str):
 	collection_club_application_submit.delete_one({"_id": ObjectId(objid)})
-	return []
+	return {"message": "삭제 완료"}
 

@@ -26,7 +26,7 @@ def create_club_application_form(club_application_form: ClubApplicationForm):
 	club_objid = club_application_form["club_objid"]
 	finded_data = others_serializer(collection_club_application_form.find({"club_objid": club_objid}))
 	if(finded_data):
-		raise HTTPException(status_code=400, detail="이미 양식이 존재합니다. 기존 양식을 수정하거나 삭제 후 다시 써 주세요.")
+		raise HTTPException(status_code=400, detail={"message": "이미 양식이 존재합니다. 기존 양식을 수정하거나 삭제 후 다시 써 주세요."})
 
 	# 리스트를 쓸 수 있게 가공하기
 	questions = club_application_form["questions"]
@@ -72,10 +72,10 @@ def update_club_application_form(club_objid: str, club_application_form: ClubApp
 	# 수정하기
 	collection_club_application_form.update_one({"club_objid": club_objid}, {"$set": club_application_form})
 
-	return "수정 완료"
+	return {"message": "수정 완료"}
 
 @router.delete('/api/club_application_form/{objid}')
 def delete_club_application_form(objid: str):
 	collection_club_application_form.delete_one({"_id": ObjectId(objid)})
-	return []
+	return {"message": "삭제 완료"}
 

@@ -11,17 +11,11 @@ get_bearer_token = HTTPBearer(auto_error=False)
 
 NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
 
-
-class UnauthorizedMessage(BaseModel):
-	detail: str = "유효하지 않는 토큰이다."
-
-
-
 # We will handle a missing token ourselves
 get_bearer_token = HTTPBearer(auto_error=False)
 
 class UnauthorizedMessage(BaseModel):
-	detail: str = "유효하지 않는 토큰이다."
+	detail = {"message": "유효하지 않는 토큰이다."}
 
 async def verify_and_get_naver_token(
     auth: t.Optional[HTTPAuthorizationCredentials] = Depends(get_bearer_token),

@@ -27,15 +27,15 @@ def read_club_active_records_all(club_objid: str, skip: int, limit: int):
 @router.post("/api/club_active_records")
 def create_club_active_records(club_active_record: ClubActiveRecord):
     inserted_data = collection_club_active_record.insert_one(dict(club_active_record))
-    return "추가 성공"
+    return {"message": "추가 성공"}
 
 @router.put("/api/club_active_records/{objid}")
 def update_club_active_records(objid: str, club_active_record: ClubActiveRecord):
     collection_club_active_record.update_one({"_id": ObjectId(objid)}, {"$set": dict(club_active_record)})
-    return "수정 성공"
+    return {"message": "수정 성공"}
 
 @router.delete("/api/club_active_records/{objid}")
 def delete_club_active_records(objid: str):
     collection_club_active_record.delete_one({"_id": objid})
-    return "삭제 성공"
+    return {"message": "삭제 성공"}
 

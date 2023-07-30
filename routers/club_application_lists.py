@@ -26,7 +26,7 @@ def read_user_club_application_lists(user_objid: str):
 @router.post("/api/club_application_lists")
 def create_user_club_application_list(club_application_list: ClubApplicationList):
     collection_club_application_list.insert_one(dict(club_application_list))
-    return "추가 성공"
+    return {"message": "추가 성공"}
 
 @router.put("/api/club_application_lists/{objid}", description="동아리 별로 동아리 활동 내역 하나 수정하기")
 def put_club_application_list(objid: str, club_application_list: ClubApplicationList):

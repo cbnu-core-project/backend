@@ -38,7 +38,7 @@ def update_user_clubs(clubs: UserClubs, unique_id: str = Depends(verify_common_t
     clubs_list = dict(clubs).get("clubs")
     collection_user.update_one({"_id": ObjectId(user["_id"])}, {
                                "$set": {"clubs": clubs_list}})
-    return "update"
+    return {"message": "update 완료"}
 
 # 유저 동아리 리스트에 동아리 1개 추가하기
 @router.post("/api/user/club/push", description="유저 동아리 리스트에 동아리 1개 추가")
@@ -47,7 +47,7 @@ def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token
     collection_user.update_one({"_id": ObjectId(user["_id"])}, {
                                "$push": {"clubs": club_objid}})
 
-    return "push"
+    return {"message": "push 완료"}
 
 # 현재 유저가 속한 관심동아리 리스트 가져오기
 @router.get("/api/user/interests")
@@ -66,7 +66,7 @@ def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token
     collection_user.update_one({"unique_id": unique_id}, {
                                "$push": {"interests": club_objid}})
 
-    return "push"
+    return {"message": "push 완료"}
 
 # 유저 관심동아리 삭제
 @router.delete("/api/user/interest/delete/{club_objid}", description="관심동아리의 club_objid를 보내주면 그것을 삭제 (인덱스x)")
@@ -74,7 +74,7 @@ def push_user_club(club_objid: str, unique_id: str = Depends(verify_common_token
     collection_user.update_one({"unique_id": unique_id}, {
                                "$pull": {"interests": club_objid}})
 
-    return "delete"
+    return {"message": "delete 완료"}
 
 
 class RefreshToken(BaseModel):
@@ -93,7 +93,7 @@ def refresh(token: RefreshToken):
 
 @router.get("/api/common/protected")
 def common_protected(unique_id: str = Depends(verify_common_token_and_get_unique_id)):
-    return "토큰 유효해요."
+    return {"message": "토큰 유효해요."}
 
 
 class AccessToken(BaseModel):

@@ -63,7 +63,7 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
     # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
     authority = verify_club_authority(unique_id, club_objid)
     if authority > 2:
-        raise HTTPException(status_code=401, detail=f"임원 이상의 권한이 필요합니다. 당신의 권한 : {authority}")
+        raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
     collection_schedule.insert_one(schedule_dict)
 
@@ -78,7 +78,7 @@ def update_user_schedule(objid: str, schedule: Schedule, unique_id: str = Depend
     # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
     authority = verify_club_authority(unique_id, club_objid)
     if authority > 2:
-        raise HTTPException(status_code=401, detail=f"임원 이상의 권한이 필요합니다. 당신의 권한 : {authority}")
+        raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
     collection_schedule.update_one({"_id": ObjectId(objid)}, {"$set": schedule_dict})
 
@@ -90,12 +90,12 @@ def delete_user_schedule(schedule_objid: str, unique_id: str = Depends(verify_co
         schedule = schedules_serializer(collection_schedule.find({"_id": ObjectId(schedule_objid)}))
         club_objid = schedule[0].get("club_objid")
     except:
-        raise HTTPException(status_code=400, detail="유효하지 않은 objid")
+        raise HTTPException(status_code=400, detail={"message": "유효하지 않은 objid"})
 
     # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
     authority = verify_club_authority(unique_id, club_objid)
     if authority > 2:
-        raise HTTPException(status_code=401, detail=f"임원 이상의 권한이 필요합니다. 당신의 권한 : {authority}")
+        raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
     collection_schedule.delete_one({"_id": ObjectId(schedule_objid)})
     return {"message": "삭제 성공", "authority": authority}

@@ -28,7 +28,7 @@ def create_club_programs(club_programs: ClubPrograms):
 @router.delete("/api/club_programs/{objid}", description="해당 동아리 활동 프로그램 1개만 삭제하기")
 def delete_club_programs(objid: str):
     collection_club_programs.delete_one({"_id":ObjectId(objid)})
-    return []
+    return {"message": "삭제 성공"}
 
 @router.put("/api/club_programs/{objid}", description="해당 동아리 활동 프로그램 선택 수정하기")
 def put_club_programs(objid: str, club_programs: ClubPrograms):

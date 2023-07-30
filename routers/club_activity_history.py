@@ -28,7 +28,7 @@ def create_club_activity_history(club_activity_history: ClubActivityHistory):
 @router.delete("/api/club_activity_history/{objid}", description="동아리 별로 동아리 활동 내역 하나 삭제하기")
 def delete_club_activity_history(objid: str):
     collection_club_activity_history.delete_one({"_id" : ObjectId(objid)})
-    return []
+    return {"message": "삭제 완료"}
 
 @router.put("/api/club_activity_history/{objid}", description="동아리 별로 동아리 활동 내역 하나 수정하기")
 def put_club_activity_history(objid: str, club_activity_history: ClubActivityHistory):
