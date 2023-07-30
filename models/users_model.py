@@ -9,7 +9,6 @@ class User(BaseModel):
     social: str
     clubs: list[dict] # 속해있는 동아리
     refresh_token: str
-    authority: int
     major: str
     student_number: str
     phone_number: str
