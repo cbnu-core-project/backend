@@ -40,7 +40,7 @@ def get_kakao_user_info(access_token):
 	if not response.ok:
 		raise HTTPException(
 			status_code=401,
-			detail="잘못 된 access_token",
+			detail={"message": "잘못 된 access_token"},
 			headers={"WWW-Authenticate": "Bearer"},
 		)
 
@@ -90,7 +90,7 @@ def kakao_oauth(code: Code):
 	if (not(is_email_valid) or not(is_email_verified)):
 		raise HTTPException(
 			status_code=401,
-			detail="유효하지 않거나 인증되지 않은 이메일",
+			detail={"message": "유효하지 않거나 인증되지 않은 이메일"},
 			headers={"WWW-Authenticate": "Bearer"},
 		)
 
@@ -107,4 +107,4 @@ def kakao_oauth(code: Code):
 )
 async def protected(token: str = Depends(verify_and_get_kakao_token)):
 	print(get_kakao_user_info(token))
-	return f"Hello, user! Your token is {token}."
+	return {"message": f"Hello, user! Your token is {token}."}

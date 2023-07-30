@@ -10,7 +10,7 @@ from starlette import status
 get_bearer_token = HTTPBearer(auto_error=False)
 
 class UnauthorizedMessage(BaseModel):
-	detail: str = "유효하지 않는 토큰이다."
+	detail = {"message":"유효하지 않는 토큰이다."}
 
 async def verify_and_get_kakao_token(
     auth: t.Optional[HTTPAuthorizationCredentials] = Depends(get_bearer_token),

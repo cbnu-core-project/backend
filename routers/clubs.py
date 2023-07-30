@@ -105,12 +105,12 @@ async def update_club(objid: str, club: Club):
 @router.delete("/api/club/{objid}", description="동아리 삭제하기 - ex) /api/post/123412 (삭제할 objectid) 경로로 'delete' 요청")
 async def delete_club(objid: str):
 	collection_club.delete_one({"_id": ObjectId(objid)})
-	return []
+	return {"message": "삭제 완료"}
 
 @router.post("/api/club/activity_tag/push", description="동아리 활동태그 추가(push)하기")
 def delete_activity_tag(objid: str, activity_tag: str):
 	collection_club.update_one({"_id": ObjectId(objid)}, {"$push" : {"activity_tags": activity_tag}})
-	return "추가 완료"
+	return {"message": "추가 완료"}
 
 @router.delete("/api/club/activity_tag/index", description="동아리 활동태그 인덱스를 통해 삭제하기")
 def delete_activity_tag(objid: str, index: int):
@@ -118,15 +118,15 @@ def delete_activity_tag(objid: str, index: int):
 	collection_club.update_one({"_id": ObjectId(objid)}, {"$unset": {f"activity_tags.{index}": 1}})
 	collection_club.update_one({"_id": ObjectId(objid)}, {"$pull": {"activity_tags": None}})
 
-	return "태그 삭제 완료"
+	return {"message": "태그 삭제 완료"}
 
 
 @router.post("/api/club/image/push", description="쿼리파라미터로, 수정할 club의 objid랑, 추가할 image_url 주기")
 def push_image_url(club_objid: str, image_url: str):
 	collection_club.update_one({"_id": ObjectId(club_objid)}, { "$push" : { "image_urls": image_url}})
-	return "push success"
+	return {"message": "push success"}
 
 @router.put("/api/club/image/update", description="쿼리파라미터로, 수정할 club의 objid랑, 대체할 image_url 주기")
 def push_image_url(club_objid: str, image_url: str):
 	collection_club.update_one({"_id": ObjectId(club_objid)}, { "$set" : { "image_urls": [image_url]}})
-	return "image update success"
+	return {"message": "image update success"}

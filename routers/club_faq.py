@@ -27,7 +27,7 @@ def create_club_faq(club_faq: ClubFaq):
     club_objid = club_faq["club_objid"]
     finded_data = others_serializer(collection_club_faq.find({"club_objid": club_objid}))
     if (finded_data):
-        raise HTTPException(status_code=400, detail="이미 faq가 존재합니다. 기존 faq를 수정하거나 삭제 후 다시 써 주세요.")
+        raise HTTPException(status_code=400, detail={"message": "이미 faq가 존재합니다. 기존 faq를 수정하거나 삭제 후 다시 써 주세요."})
     faqs = club_faq["faqs"]
     new_faqs = [ dict(faq) for faq in faqs ]
     
@@ -39,7 +39,7 @@ def create_club_faq(club_faq: ClubFaq):
 @router.delete("/api/club_faq/{objid}")
 def delete_club_faq(objid: str):
     collection_club_faq.delete_one({"_id" : ObjectId(objid)})
-    return []
+    return {"message": "삭제 완료"}
 
 @router.put("/api/club_faq/{objid}")
 def update_club_faq(objid: str, club_faq: ClubFaq):

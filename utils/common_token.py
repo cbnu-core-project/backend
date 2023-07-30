@@ -30,8 +30,6 @@ NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
 NAVER_DELETE_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&service_provider=NAVER&access_token="
 
 
-class UnauthorizedMessage(BaseModel):
-    detail: str = "유효하지 않는 토큰이다."
 
 
 def verify_common_token_and_get_unique_id(
@@ -42,7 +40,7 @@ def verify_common_token_and_get_unique_id(
     if auth is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="토큰이 존재하지 않습니다.",
+            detail={"message": "토큰이 존재하지 않습니다."},
         )
 
     token = auth.credentials
@@ -63,14 +61,14 @@ def verify_common_token_and_get_unique_id(
     # 토큰이 유효하지 않다면 401
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="토큰이 유효하지 않습니다.",
+        detail={"message": "토큰이 유효하지 않습니다."},
     )
 
 
 def verify_common_refresh_token_and_create_access_token(refresh_token):
     # refresh_token을 이용한 access_token 재발급
     if refresh_token == None:
-        raise HTTPException(status_code=401, detail="토큰이 없습니다.")
+        raise HTTPException(status_code=401, detail={"message": "토큰이 없습니다."})
 
     # 토큰 검증 (1. 카카오)
     kakao_headers = {
@@ -94,7 +92,7 @@ def verify_common_refresh_token_and_create_access_token(refresh_token):
     # 토큰이 유효하지 않다면 401
     raise HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail=UnauthorizedMessage().detail,
+        detail={"message": "토큰이 유효하지 않습니다."},
     )
 
 # 헤더를 통해 읽어와서 로그아웃 (Depend)
@@ -110,7 +108,7 @@ def common_header_access_token_logout(auth: t.Optional[HTTPAuthorizationCredenti
     # 2. 네이버 로그아웃
     response = requests.post(NAVER_DELETE_TOKEN_URL + token)
 
-    return "access_token 만료 처리"
+    return {"message": "access_token 만료 처리"}
 
 # 파라미터로 받아서 로그아웃
 
@@ -124,4 +122,4 @@ def common_access_token_logout(access_token: str):
     # 2. 네이버 로그아웃
     response = requests.post(NAVER_DELETE_TOKEN_URL + access_token)
 
-    return "access_token 만료 처리"
+    return {"message": "access_token 만료 처리"}
