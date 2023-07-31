@@ -7,6 +7,11 @@ from models.schedules_model import Schedule
 from utils.common_token import verify_common_token_and_get_unique_id
 from pydantic import BaseModel
 from utils.authority import verify_club_authority
+import string
+import random
+import time
+import pendulum
+from datetime import datetime
 
 router = APIRouter(
     tags=["schedules"]
@@ -57,7 +62,15 @@ def get_user_schedule(club_objid: str):
 
 @router.post('/api/user/schedule')
 def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
+    # unique_id 난수를 통해 생성
+    letter = string.ascii_letters
+    rand_str = ''.join(random.choice(letter) for i in range(6))
+    now = time.time()
+    relative_schedule_unique_id = f'{rand_str}_{now}'
+
+
     schedule_dict = dict(schedule)
+    schedule_dict["relative_schedule_unique_id"] = relative_schedule_unique_id
     club_objid = schedule_dict.get('club_objid')
 
     # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
@@ -65,24 +78,34 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
     if authority > 2:
         raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
-    collection_schedule.insert_one(schedule_dict)
+    start = pendulum.instance(schedule.start_datetime)
+    if (start.day_of_week == 0):
+        start_week_sunday = start
+    else:
+        start_week_sunday = start.start_of('week').subtract(days=1)
+    print(start_week_sunday)
+
+    # start.month 와 start.day 를 반복하며.. 일요일 로 끊어준다?
+
+
+    # collection_schedule.insert_one(schedule_dict)
 
     return { "message": "추가 성공", "authority": authority}
 
 # 받아온 schedule 데이터로 전부 대체
-@router.put('/api/user/schedule/{objid}')
-def update_user_schedule(objid: str, schedule: Schedule, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
-    schedule_dict = dict(schedule)
-    club_objid = schedule_dict.get('club_objid')
-
-    # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
-    authority = verify_club_authority(unique_id, club_objid)
-    if authority > 2:
-        raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
-
-    collection_schedule.update_one({"_id": ObjectId(objid)}, {"$set": schedule_dict})
-
-    return {"message": "수정 성공", "authority": authority}
+# @router.put('/api/user/schedule/{objid}')
+# def update_user_schedule(objid: str, schedule: Schedule, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
+#     schedule_dict = dict(schedule)
+#     club_objid = schedule_dict.get('club_objid')
+#
+#     # 토큰이 유효하고, 동아리 권한이 2이하라면(임원이상)
+#     authority = verify_club_authority(unique_id, club_objid)
+#     if authority > 2:
+#         raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
+#
+#     collection_schedule.update_one({"_id": ObjectId(objid)}, {"$set": schedule_dict})
+#
+#     return {"message": "수정 성공", "authority": authority}
 
 @router.delete('/api/user/schedule/{schedule_objid}')
 def delete_user_schedule(schedule_objid: str, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
