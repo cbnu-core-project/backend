@@ -19,6 +19,11 @@ def get_club_application_submit(objid: str):
 	club_application_submit = others_serializer((collection_club_application_submit.find({"_id": ObjectId(objid)})))
 	return club_application_submit
 
+@router.get('/api/club_application_submit/club_objid/{club_objid}')
+def get_club_application_submit_clubobjid(club_objid: str):
+    club_application_submit = others_serializer((collection_club_application_submit.find({"club_objid": club_objid})))
+    return club_application_submit
+
 @router.post('/api/club_application_submit')
 def create_club_application_submit(club_application_submit: ClubApplicationSubmit):
     club_application_submit = dict(club_application_submit)
