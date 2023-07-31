@@ -78,17 +78,47 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
     if authority > 2:
         raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
-    start = pendulum.instance(schedule.start_datetime)
-    if (start.day_of_week == 0):
-        start_week_sunday = start
-    else:
-        start_week_sunday = start.start_of('week').subtract(days=1)
-    print(start_week_sunday)
+    start = pendulum.instance(schedule.start_datetime).start_of("day")
+    end = pendulum.instance(schedule.end_datetime).start_of("day")
 
-    # start.month 와 start.day 를 반복하며.. 일요일 로 끊어준다?
+    calendar_start_datetime_list = [start]
+
+    # start.month 와 start.day 를 반복하며.. 캘린더 일요일 단위로 끊어 준 리스트 만들기
+    while (start < end):
+
+        if (start.day_of_week == 0):
+            prev_week_sunday = start
+        else:
+            prev_week_sunday = start.start_of('week').subtract(days=1)
+
+        if (prev_week_sunday == start):
+            calendar_start_datetime_list.append(start)
+
+        start = start.add(days=1)
 
 
-    # collection_schedule.insert_one(schedule_dict)
+    # 끊어 만든 캘린더 시작날짜를 가지고 반복하며 가공 후 디비에 반복적으로 입력
+    for calendar_start_datetime in calendar_start_datetime_list:
+        schedule_dict["calendar_start_datetime"] = calendar_start_datetime
+
+        # schedule_length를 구하는 알고리즘
+        if (calendar_start_datetime.day_of_week == 0):
+            prev_week_sunday_2 = calendar_start_datetime
+        else:
+            prev_week_sunday_2 = calendar_start_datetime.start_of('week').subtract(days=1)
+
+        this_week_sunday = prev_week_sunday_2.add(days=7)
+
+        if (this_week_sunday < end):
+            schedule_dict["schedule_length"] = this_week_sunday.diff(calendar_start_datetime).in_days()
+        else:
+            schedule_dict["schedule_length"] = end.diff(calendar_start_datetime).in_days() + 1
+
+        print(schedule_dict)
+
+        # 복사를 안 하면, objid가 중복된다고 오류가 난다. (objid는 주소를 통해 만들어지는건가?)
+        collection_schedule.insert_one(schedule_dict.copy())
+
 
     return { "message": "추가 성공", "authority": authority}
 

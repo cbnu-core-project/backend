@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class Schedule(BaseModel):
-	# relative_schedule_unique_id: str # 연관된 스케줄의 unique_id 백엔드에서 만들거임
 	user_objid: str
 	user_unique_id: str
 	realname: str
@@ -18,8 +17,13 @@ class Schedule(BaseModel):
 	start_datetime: datetime.datetime # 실제 start datetime
 	end_datetime: datetime.datetime
 	################################################################
-	calendar_start_datetime: datetime.datetime # 캘린더에 그려주기 위해 일주일 넘어가는 단위로 끊은 것
-	schedule_length: int # 캘린더 start_datetime 기준 그 주의 마지막 까지의length
+	"""
+	직접 백엔드에서 필드를 조작해서 추가 되는 필드
+	"""
+	# relative_schedule_unique_id: str # 연관된 스케줄의 unique_id 백엔드에서 만들거임
+
+	# calendar_start_datetime: datetime.datetime # 캘린더에 그려주기 위해 일주일 넘어가는 단위로 끊은 것
+	# schedule_length: int # 캘린더 start_datetime 기준 그 주의 마지막 까지의length
 
 
 # class _Schedule(BaseModel):

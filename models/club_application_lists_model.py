@@ -7,7 +7,7 @@ class ClubApplicationList(BaseModel):
     club_name: str
     approval: int # 0 : 합격, 1 : 대기, 2 : 불합격
     classification: int
-    data: str
+    data: dict
     
 
 
