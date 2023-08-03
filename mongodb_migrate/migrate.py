@@ -33,8 +33,8 @@ def club_application_submit_migrate():
     collection_club_application_submit.update_one({},{"$set": {"user_objid": ""}})
 
 def schedule_migrate():
-    collection_schedule.update_many({}, {"$set": {"users": ["64ba1a1fd2d5e9671f8e07bc", "64be3b2d8f83d5c67de006e7", "64c22f6cd3a8a5f2797449b4", "64bb9cb3e5723a73730bfb63" ]}})
+    collection_schedule.update_many({}, {"$set": {"color": "red"}})
 
 if __name__ == "__main__":
-    club_migrate()
+    schedule_migrate()
 

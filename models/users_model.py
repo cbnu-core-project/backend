@@ -6,13 +6,18 @@ class User(BaseModel):
     realname: str
     nickname: str
     profile_image_url: str
-    social: str
-    clubs: list[dict] # 속해있는 동아리
-    refresh_token: str
+    clubs: list[str] # 속해있는 동아리
     major: str
     student_number: str
     phone_number: str
-    interests: list[dict] #관심있는 동아리
-    admin: bool
+    interests: list[str] #관심있는 동아리
+    ################################################################
+    # unique_id: str
+    # social: str
+    # refresh_token: str
+    # admin: bool
+
+
+
 
 
