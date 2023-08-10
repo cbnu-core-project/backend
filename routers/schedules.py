@@ -78,11 +78,13 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
     if authority > 2:
         raise HTTPException(status_code=401, detail={"message": "임원이상의 권한이 필요합니다.", "authority": authority})
 
+    if pendulum.instance(schedule.start_datetime) >= pendulum.instance(schedule.end_datetime):
+        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다."})
+
     start = pendulum.instance(schedule.start_datetime).start_of("day")
     end = pendulum.instance(schedule.end_datetime).start_of("day")
 
-    if start >= end:
-        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다.", "authority": authority})
+
 
     calendar_start_datetime_list = [start]
 
@@ -177,12 +179,12 @@ def update_user_schedule(relative_schedule_unique_id: str, schedule: Schedule, u
     relative_schedule_unique_id = f'{rand_str}_{now}'
     schedule_dict["relative_schedule_unique_id"] = relative_schedule_unique_id
 
+    if pendulum.instance(schedule.start_datetime) >= pendulum.instance(schedule.end_datetime):
+        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다."})
 
     start = pendulum.instance(schedule.start_datetime).start_of("day")
     end = pendulum.instance(schedule.end_datetime).start_of("day")
 
-    if start >= end:
-        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다.", "authority": authority})
 
     calendar_start_datetime_list = [start]
 
