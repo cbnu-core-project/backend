@@ -68,7 +68,9 @@ def kakao_user_register(user):
 								"student_number": "",
 								"phone_number": "",
 								"interests": [],
-								"admin": False
+								"admin": False,
+								"gender": "male",
+								"address": ""
 								})
 	return True
 

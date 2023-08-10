@@ -81,12 +81,15 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
     start = pendulum.instance(schedule.start_datetime).start_of("day")
     end = pendulum.instance(schedule.end_datetime).start_of("day")
 
+    if start >= end:
+        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다.", "authority": authority})
+
     calendar_start_datetime_list = [start]
 
     # start.month 와 start.day 를 반복하며.. 캘린더 일요일 단위로 끊어 준 리스트 만들기
     count = 0 # while문 첫 시작이 일요일 일 때 예외를 적용시켜 주기 위한 변수 설정
 
-    while (start < end):
+    while (start <= end):
 
         if (start.day_of_week == 0):
             prev_week_sunday = start
@@ -111,8 +114,12 @@ def create_user_schedule(schedule: Schedule, unique_id: str = Depends(verify_com
 
         this_week_sunday = prev_week_sunday_2.add(days=7)
 
-        if (this_week_sunday < end):
+        # print(calendar_start_datetime)
+        # print(this_week_sunday)
+
+        if (this_week_sunday <= end):
             schedule_dict["schedule_length"] = this_week_sunday.diff(calendar_start_datetime).in_days()
+            print(schedule_dict["schedule_length"])
         else:
             schedule_dict["schedule_length"] = end.diff(calendar_start_datetime).in_days() + 1
 
@@ -174,12 +181,15 @@ def update_user_schedule(relative_schedule_unique_id: str, schedule: Schedule, u
     start = pendulum.instance(schedule.start_datetime).start_of("day")
     end = pendulum.instance(schedule.end_datetime).start_of("day")
 
+    if start >= end:
+        raise HTTPException(status_code=401, detail={"message": "종료날짜가 시작날짜보다 커야합니다.", "authority": authority})
+
     calendar_start_datetime_list = [start]
 
     # start.month 와 start.day 를 반복하며.. 캘린더 일요일 단위로 끊어 준 리스트 만들기
     count = 0  # while문 첫 시작이 일요일 일 때 예외를 적용시켜 주기 위한 변수 설정
 
-    while (start < end):
+    while (start <= end):
 
         if (start.day_of_week == 0):
             prev_week_sunday = start
@@ -204,7 +214,7 @@ def update_user_schedule(relative_schedule_unique_id: str, schedule: Schedule, u
 
         this_week_sunday = prev_week_sunday_2.add(days=7)
 
-        if (this_week_sunday < end):
+        if (this_week_sunday <= end):
             schedule_dict["schedule_length"] = this_week_sunday.diff(calendar_start_datetime).in_days()
         else:
             schedule_dict["schedule_length"] = end.diff(calendar_start_datetime).in_days() + 1

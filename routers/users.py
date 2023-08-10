@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from config.database import collection_user
 from pydantic import BaseModel
 from utils.common_token import verify_common_token_and_get_unique_id, verify_common_refresh_token_and_create_access_token, common_access_token_logout, common_header_access_token_logout
+from utils.authority import verify_club_authority
 from schemas.others_schema import others_serializer
 from models.users_model import User
 
@@ -23,7 +24,8 @@ def get_user(unique_id: str = Depends(verify_common_token_and_get_unique_id)):
 def update_user_clubs(user_info: User, unique_id: str = Depends(verify_common_token_and_get_unique_id)):
     collection_user.update_one({"unique_id": unique_id}, {
         "$set": dict(user_info)})
-    return {"message": "update 완료"}
+    updated_user = others_serializer(collection_user.find({"unique_id": unique_id}))[0]
+    return updated_user
 
 
 # 현재 유저가 속한 동아리 리스트 가져오기
@@ -118,7 +120,7 @@ def access_token_logout(token: AccessToken):
 # 헤더를 통한 로그아웃
 @router.post("/api/header/access_token/logout")
 def common_logout(message: str = Depends(common_header_access_token_logout)):
-    return "로그아웃"
+    return {"message":"로그아웃"}
 
 
 class Users(BaseModel):
@@ -134,3 +136,7 @@ def get_users_info_from_users_list(users: Users):
     results = others_serializer(collection_user.find(query))
 
     return results
+
+@router.get("/api/user/authority_of_club/{club_objid}", description="로그인 된 상태로, 동아리objid를 같이 보내주면, 권한을 반환해줌(0~4)")
+def get_user_authority_of_club(club_objid: str, unique_id = Depends(verify_common_token_and_get_unique_id)):
+    return verify_club_authority(unique_id, club_objid)
