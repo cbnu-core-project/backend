@@ -54,7 +54,21 @@ def upload_file(file: UploadFile = File(...)):
   return {'file_url': path}
 
 
-@router.get('/download/file/{file_name}', response_class=FileResponse)
+# 파일 다운로드, attachement로 다운로드
+@router.get('/download/files/{file_name}')
 def download(file_name: str):
-    path = f"files/{file_name}"
-    return path
+    file_path = f"files/{file_name}"
+
+    # 난수가 들어가기 전의 기존 파일이름 구하기
+    # file_type = file_name.split('.')[-1]
+    # origin_file_name = '_'.join(file_name.split('.')[0].split('_')[0:-2]) + '.' + file_type
+    # print(origin_file_name)
+    # print(file_name.split('.')[0].split('_')[0:-2])
+
+    # print(file_name.encode('utf-8').decode('utf-8'))
+
+    # 한글 깨짐 문제로, 인코딩타입을 지정해서 보내줘야한다.
+    response = FileResponse(file_path, headers={
+        "Content-Disposition": f"attachment; filename*=\"UTF-8\"{file_name.encode('utf-8')}",
+    })
+    return response
