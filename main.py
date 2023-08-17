@@ -27,7 +27,7 @@ async def home():
 	return {"message": "hello world !"}
 
 # 이미지/파일 staticFiles 마운트
-app.mount("/images", StaticFiles(directory="images"), name="images")
+# app.mount("/images", StaticFiles(directory="images"), name="images")
 # app.mount('/files', StaticFiles(directory='files'), name='files')
 
 # 라우터 사용 설정

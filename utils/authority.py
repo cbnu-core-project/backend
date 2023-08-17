@@ -1,6 +1,7 @@
 from config.database import collection_user, collection_club
 from schemas.others_schema import others_serializer
 from bson import ObjectId
+from fastapi import HTTPException
 
 
 """
@@ -33,3 +34,39 @@ def verify_club_authority(unique_id: str, club_objid: str):
 		return 3
 
 	return 4
+
+def return_club_member_info_and_club_authority(club_objid: str):
+	club = others_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
+
+	user_objid_list = club.get("member")
+
+	if len(user_objid_list) == 0:
+		raise HTTPException(status_code=400,  detail={"message": "현재 동아리 멤버가 아무도 존재하지 않습니다."})
+
+	# 검색 조건 설정
+	query = {"$or": [{"_id": ObjectId(user_objid)} for user_objid in user_objid_list]}
+
+	users = others_serializer(collection_user.find(query))
+
+	# user정보 리스트에 유저 권한도 끼워넣기
+	for user in users:
+		if user.get("admin"):
+			user["current_club_authority"] = 0
+
+		elif str(user.get("_id")) in club.get("president"):
+			user["current_club_authority"] = 1
+
+		elif str(user.get("_id")) in club.get("executive"):
+			user["current_club_authority"] = 2
+
+		elif str(user.get("_id")) in club.get("member"):
+			user["current_club_authority"] = 3
+
+		else:
+			user["current_club_authority"] = 4
+
+	return users
+
+# 테스트용 코드
+if __name__ == "__main__":
+    print(return_club_member_info_and_club_authority("6460426f53f96addfe9e2c36"))

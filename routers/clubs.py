@@ -1,9 +1,10 @@
 from bson import ObjectId
 from fastapi import APIRouter
-from config.database import collection_club
+from config.database import collection_club, collection_user
 from models.clubs_model import Club
 from schemas.clubs_schema import clubs_serializer
-
+from schemas.others_schema import others_serializer
+from utils.authority import return_club_member_info_and_club_authority
 
 router = APIRouter(
 	tags=["clubs"]
@@ -130,3 +131,8 @@ def push_image_url(club_objid: str, image_url: str):
 def push_image_url(club_objid: str, image_url: str):
 	collection_club.update_one({"_id": ObjectId(club_objid)}, { "$set" : { "image_urls": [image_url]}})
 	return {"message": "image update success"}
+
+
+@router.get("/api/club/member/{club_objid}", description="club_objid(str)를 path파라미터로 보내면, 그 동아리에 속한 멤버 정보가 담긴 리스트로 바꿔 줌, 그 동아리 내에서의 직급까지 같이 넣어서 보여줌.")
+def get_users_info_from_users_list(club_objid: str):
+	return return_club_member_info_and_club_authority(club_objid)

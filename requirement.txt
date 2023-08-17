@@ -9,3 +9,4 @@ certifi
 python-dotenv
 requests
 pendulum
+boto3

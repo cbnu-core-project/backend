@@ -13,6 +13,9 @@ def club_serializer(club) -> dict:
 		"tag3": club["tag3"],
 		"classification": club["classification"],
 		"last_updated": club["last_updated"],
+		"president": club["president"],
+		"executive": club["executive"],
+		"member": club["member"],
 	}
  
 

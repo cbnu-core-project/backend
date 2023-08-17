@@ -126,17 +126,18 @@ def common_logout(message: str = Depends(common_header_access_token_logout)):
 class Users(BaseModel):
     users: list[str]
 
-@router.post("/api/user/info/user_objid_list", description="유저 objid(list[str]) 리스트를 보내면, 유저 정보가 담긴 리스트로 바꿔 줌")
+@router.post("/api/user/info/user_objid_list", description="유저 objid(list[str]) 리스트를 보내면, 유저 정보가 담긴 리스트로 바꿔 줌 (이름순으로)")
 def get_users_info_from_users_list(users: Users):
     users = dict(users).get('users')
 
     # 검색 조건 설정
     query = {"$or": [{"_id": ObjectId(user)} for user in users]}
 
-    results = others_serializer(collection_user.find(query))
+    results = others_serializer(collection_user.find(query).sort("realname", 1))
 
     return results
 
 @router.get("/api/user/authority_of_club/{club_objid}", description="로그인 된 상태로, 동아리objid를 같이 보내주면, 권한을 반환해줌(0~4)")
 def get_user_authority_of_club(club_objid: str, unique_id = Depends(verify_common_token_and_get_unique_id)):
     return verify_club_authority(unique_id, club_objid)
+
