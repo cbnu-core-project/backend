@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from config.database import collection_club_application_list
 from models.club_application_lists_model import ClubApplicationList
 from schemas.others_schema import others_serializer
 from bson import ObjectId
+
 
 router = APIRouter(
     tags=["club_application_lists"]
@@ -38,3 +39,9 @@ def put_club_application_list(objid: str, club_application_list: ClubApplication
 def delete_club_application_list(objid: str):
     collection_club_application_list.delete_one({"_id" : ObjectId(objid)})
     return []
+
+@router.post("/api/club_application_lists/approval", description="동아리 별로 동아리 활동 내역 하나 수정하기")
+def put_club_application_list(objid: str, approval: int = Query(ge=0, le=2)):
+    collection_club_application_list.update_one({"_id":ObjectId(objid)}, {"$set": {"approval": approval}})
+    club_application_list = others_serializer(collection_club_application_list.find({"_id": ObjectId(objid)}))
+    return club_application_list

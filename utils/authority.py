@@ -12,7 +12,7 @@ executive(임원) 이상(어드민, 회장, 임원, 동아리원)인지 권한�
 3: 동아리원
 4: 비동아리원
 """
-def verify_club_authority(unique_id: str, club_objid: str):
+def verify_club_authority(unique_id: str, club_objid: str, inclusion_objid: bool = False):
 	user = others_serializer(collection_user.find({"unique_id": unique_id}))[0]
 	club = others_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
 
@@ -22,18 +22,33 @@ def verify_club_authority(unique_id: str, club_objid: str):
 	"""
 
 	if user.get("admin"):
-		return 0
+		if inclusion_objid:
+			return { "authority": 0, "objid": str(user.get("_id")) }
+		else:
+			return 0
 
 	if str(user.get("_id")) in club.get("president"):
-		return 1
+		if inclusion_objid:
+			return { "authority": 1, "objid": str(user.get("_id")) }
+		else:
+			return 1
 
 	if str(user.get("_id")) in club.get("executive"):
-		return 2
+		if inclusion_objid:
+			return { "authority": 2, "objid": str(user.get("_id")) }
+		else:
+			return 2
 
 	if str(user.get("_id")) in club.get("member"):
-		return 3
+		if inclusion_objid:
+			return { "authority": 3, "objid": str(user.get("_id")) }
+		else:
+			return 3
 
-	return 4
+	if inclusion_objid:
+		return { "authority": 4, "objid": str(user.get("_id")) }
+	else:
+		return 4
 
 def return_club_member_info_and_club_authority(club_objid: str):
 	club = others_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
@@ -46,7 +61,7 @@ def return_club_member_info_and_club_authority(club_objid: str):
 	# 검색 조건 설정
 	query = {"$or": [{"_id": ObjectId(user_objid)} for user_objid in user_objid_list]}
 
-	users = others_serializer(collection_user.find(query))
+	users = others_serializer(collection_user.find(query).sort("realname", 1))
 
 	# user정보 리스트에 유저 권한도 끼워넣기
 	for user in users:

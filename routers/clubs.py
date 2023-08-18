@@ -1,10 +1,11 @@
 from bson import ObjectId
-from fastapi import APIRouter
+from fastapi import APIRouter, Query, Depends, HTTPException
 from config.database import collection_club, collection_user
 from models.clubs_model import Club
 from schemas.clubs_schema import clubs_serializer
 from schemas.others_schema import others_serializer
-from utils.authority import return_club_member_info_and_club_authority
+from utils.authority import return_club_member_info_and_club_authority, verify_club_authority
+from utils.common_token import verify_common_token_and_get_unique_id
 
 router = APIRouter(
 	tags=["clubs"]
@@ -136,3 +137,111 @@ def push_image_url(club_objid: str, image_url: str):
 @router.get("/api/club/member/{club_objid}", description="club_objid(str)를 path파라미터로 보내면, 그 동아리에 속한 멤버 정보가 담긴 리스트로 바꿔 줌, 그 동아리 내에서의 직급까지 같이 넣어서 보여줌.")
 def get_users_info_from_users_list(club_objid: str):
 	return return_club_member_info_and_club_authority(club_objid)
+
+
+# 들어 있을 때만 삭제, 없으면 아무것도 안 하기
+def remove_element(arr: list, element: str):
+	if element in arr:
+		arr.remove(element)
+	else:
+		pass
+
+@router.post("/api/club/member", description=
+"""	
+		동아리 회장이상만 사용가능, 동아리 회장이 회장을 위임하거나, 동아리원들의 권한을 변경 할 때 사용
+												 
+		전부 쿼리파라미터로 넘겨주면 됨.
+		club_objid : 수정할 동아리의 objid
+		user_objid : 권한을 변경시킬 유저의 objid
+		authority : 변경시킬 권한 ( 1 ~ 3 )  1회장으로 변경시킬 시에는 자신의 권한이 회장->동아리원으로 낮아짐
+	""")
+def update_club_member_authority(club_objid: str, user_objid: str, authority: int = Query(ge=1, le=3), unique_id = Depends(verify_common_token_and_get_unique_id)):
+
+	my_data = verify_club_authority(unique_id=unique_id, club_objid=club_objid, inclusion_objid=True)
+  
+	if my_data.get("authority") >= 2:
+		raise HTTPException(status_code=401, detail={"message": "동아리 회장만 직급을 수정할 수 있습니다."})
+  
+	# 동아리 가져오기
+	club = clubs_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
+	president = club.get("president")
+	executive = club.get("executive")
+	member = club.get("member")
+  
+  
+	"""
+	수정해 주는 계급이 동아리 회장이라면?
+  	일단, 회장과 임원에서 "나"를 찾아 다 삭제
+  	그리고, 상대방을 동아리 회장으로 수정시켜줌
+ 	"""
+	if authority == 1:
+		remove_element(president, my_data.get("objid"))
+		remove_element(executive, my_data.get("objid"))
+
+		remove_element(president, user_objid)
+		remove_element(executive, user_objid)
+
+		president.append(user_objid)
+	elif authority == 2:
+		remove_element(president, user_objid)
+		remove_element(executive, user_objid)
+
+		executive.append(user_objid)
+
+	elif authority == 3:
+		remove_element(president, user_objid)
+		remove_element(executive, user_objid)
+   
+
+	collection_club.update_one({"_id": ObjectId(club_objid)}, {"$set": { "president": president,
+																		 "executive": executive}})
+
+	updated_club = clubs_serializer(collection_club.find({"_id": ObjectId(club_objid)}))
+
+	return updated_club
+  
+@router.delete("/api/club/delete/member")
+def delete_club(club_objid: str, user_objid: str, unique_id = Depends(verify_common_token_and_get_unique_id)):
+	my_data = verify_club_authority(unique_id=unique_id, club_objid=club_objid, inclusion_objid=True)
+
+	if my_data.get("authority") >= 2:
+		raise HTTPException(status_code=401, detail={"message": "동아리 회장만 직급을 수정할 수 있습니다."})
+
+	# 동아리 가져오기
+	club = clubs_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
+	president = club.get("president")
+	executive = club.get("executive")
+	member = club.get("member")
+
+	remove_element(president, user_objid)
+	remove_element(executive, user_objid)
+	remove_element(member, user_objid)
+
+	collection_club.update_one({"_id": ObjectId(club_objid)}, {"$set": { "president": president,
+																		 "executive": executive,
+																		 "member": member}})
+	collection_user.update_one({"_id": ObjectId(user_objid)}, {"$pull": {"clubs": club_objid}})
+	
+	return {"message": "탈퇴 완료"}
+
+@router.post("/api/club/post/member")
+def post_club_member(club_objid: str, user_objid: str, unique_id = Depends(verify_common_token_and_get_unique_id)):
+	my_data = verify_club_authority(unique_id=unique_id, club_objid=club_objid, inclusion_objid=True)
+
+	if my_data.get("authority") >= 3:
+		raise HTTPException(status_code=401, detail={"message": "동아리 임원 이상만 직급을 수정할 수 있습니다."})
+
+	# 동아리 가져오기
+	club = clubs_serializer(collection_club.find({"_id": ObjectId(club_objid)}))[0]
+	president = club.get("president")
+	executive = club.get("executive")
+	member = club.get("member")
+
+	if user_objid in member:
+		raise HTTPException(status_code=400, detail={"message": "이미 가입된 사용자입니다."})
+	
+	# 동아리에 넣기
+	collection_club.update_one({"_id": ObjectId(club_objid)}, {"$push": {"member": user_objid}})
+	collection_user.update_one({"_id": ObjectId(user_objid)}, {"$push": {"clubs": club_objid}})
+	
+	return {'message': "동아리에 추가 성공"}
