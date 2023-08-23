@@ -23,30 +23,30 @@ def verify_club_authority(unique_id: str, club_objid: str, inclusion_objid: bool
 
 	if user.get("admin"):
 		if inclusion_objid:
-			return { "authority": 0, "objid": str(user.get("_id")) }
+			return { "authority": 0, "objid": str(user.get("_id")), "user": user }
 		else:
 			return 0
 
 	if str(user.get("_id")) in club.get("president"):
 		if inclusion_objid:
-			return { "authority": 1, "objid": str(user.get("_id")) }
+			return { "authority": 1, "objid": str(user.get("_id")), "user": user  }
 		else:
 			return 1
 
 	if str(user.get("_id")) in club.get("executive"):
 		if inclusion_objid:
-			return { "authority": 2, "objid": str(user.get("_id")) }
+			return { "authority": 2, "objid": str(user.get("_id")), "user": user  }
 		else:
 			return 2
 
 	if str(user.get("_id")) in club.get("member"):
 		if inclusion_objid:
-			return { "authority": 3, "objid": str(user.get("_id")) }
+			return { "authority": 3, "objid": str(user.get("_id")), "user": user  }
 		else:
 			return 3
 
 	if inclusion_objid:
-		return { "authority": 4, "objid": str(user.get("_id")) }
+		return { "authority": 4, "objid": str(user.get("_id")), "user": user  }
 	else:
 		return 4
 

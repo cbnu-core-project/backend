@@ -1,0 +1,80 @@
+2023-08-19 22:18:45,368 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:18:45,368 ERROR:GET err test
+2023-08-19 22:18:49,372 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:18:49,373 ERROR:GET err test
+2023-08-19 22:19:12,505 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:19:12,505 ERROR:GET err test
+2023-08-19 22:19:12,505 CRITICAL:GET critical test
+2023-08-19 22:19:16,143 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:19:16,143 ERROR:GET err test
+2023-08-19 22:19:16,143 CRITICAL:GET critical test
+2023-08-19 22:19:26,844 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:19:26,844 ERROR:GET err test
+2023-08-19 22:19:26,844 CRITICAL:GET critical test
+2023-08-19 22:22:06,269 INFO:GET - /api/clubs 요청 받음
+2023-08-19 22:22:13,216 INFO:GET - /api/clubs/classification/ 요청 받음
+2023-08-19 22:46:29,687 INFO:DELETE - /api/club/delete/member : 코어에서 조현호(64df0c6e2d34e68a7e248d25) 유저가 탈퇴 처리됨
+2023-08-19 22:47:03,706 INFO:POST - /api/club/post/member : 코어 동아리에 조현호(64df0c6e2d34e68a7e248d25) 유저가 가입되었습니다.
+2023-08-23 14:27:45,196 INFO:GET - /api/clubs
+2023-08-23 14:28:09,210 INFO:GET - /api/clubs
+2023-08-23 15:30:08,089 INFO:GET - /api/clubs
+2023-08-24 00:00:24,436 INFO:GET - /api/clubs/some/
+2023-08-24 00:00:24,456 INFO:GET - /api/clubs
+2023-08-24 00:00:25,209 INFO:GET - /api/clubs/some/classification/
+2023-08-24 00:00:25,220 INFO:GET - /api/clubs/classification/
+2023-08-24 00:00:25,656 INFO:GET - /api/clubs/some/
+2023-08-24 00:00:25,675 INFO:GET - /api/clubs
+2023-08-24 00:00:30,267 INFO:GET - /api/clubs
+2023-08-24 00:00:30,279 INFO:GET - /api/clubs/some/
+2023-08-24 00:00:30,292 INFO:GET - /api/clubs
+2023-08-24 00:00:31,742 INFO:GET - /api/clubs
+2023-08-24 00:00:31,762 INFO:GET - /api/clubs/some/
+2023-08-24 00:02:12,162 INFO:GET - /api/clubs/some/
+2023-08-24 00:02:12,180 INFO:GET - /api/clubs
+2023-08-24 00:10:50,699 INFO:GET - /api/clubs
+2023-08-24 00:10:50,712 INFO:GET - /api/clubs/some/
+2023-08-24 00:10:50,725 INFO:GET - /api/clubs
+2023-08-24 00:10:51,190 INFO:GET - /api/clubs/some/
+2023-08-24 00:10:51,208 INFO:GET - /api/clubs
+2023-08-24 00:10:56,326 INFO:GET - /api/clubs
+2023-08-24 00:10:56,339 INFO:GET - /api/clubs/some/
+2023-08-24 00:10:56,350 INFO:GET - /api/clubs
+2023-08-24 00:10:56,668 INFO:GET - /api/clubs/some/
+2023-08-24 00:10:56,680 INFO:GET - /api/clubs
+2023-08-24 00:10:58,515 INFO:GET - /api/clubs/some/
+2023-08-24 00:10:58,554 INFO:GET - /api/clubs
+2023-08-24 00:10:58,985 INFO:GET - /api/clubs
+2023-08-24 00:10:59,000 INFO:GET - /api/clubs
+2023-08-24 00:10:59,136 INFO:GET - /api/clubs
+2023-08-24 00:10:59,146 INFO:GET - /api/clubs
+2023-08-24 00:11:01,294 INFO:GET - /api/clubs
+2023-08-24 00:11:01,305 INFO:GET - /api/clubs
+2023-08-24 00:11:01,314 INFO:GET - /api/clubs/some/
+2023-08-24 00:11:02,158 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:02,174 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:02,188 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:05,593 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:05,595 INFO:GET - /api/club/member/{club_objid}
+2023-08-24 00:11:12,029 INFO:GET - /api/club/member/{club_objid}
+2023-08-24 00:11:12,035 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:14,657 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:14,672 INFO:GET - /api/club/{objid}
+2023-08-24 00:11:15,419 INFO:GET - /api/clubs
+2023-08-24 00:11:15,470 INFO:GET - /api/clubs/some/
+2023-08-24 00:14:04,747 INFO:GET - /api/clubs/some/
+2023-08-24 00:14:04,786 INFO:GET - /api/clubs
+2023-08-24 00:14:13,942 INFO:GET - /api/clubs/some/
+2023-08-24 00:14:13,973 INFO:GET - /api/clubs
+2023-08-24 00:14:17,183 INFO:GET - /api/club/{objid}
+2023-08-24 00:14:17,211 INFO:GET - /api/club/{objid}
+2023-08-24 00:14:17,220 INFO:GET - /api/club/{objid}
+2023-08-24 00:14:18,116 INFO:GET - /api/clubs/some/
+2023-08-24 00:14:18,157 INFO:GET - /api/clubs
+2023-08-24 00:14:23,231 INFO:GET - /api/clubs/some/
+2023-08-24 00:14:23,244 INFO:GET - /api/clubs
+2023-08-24 00:14:23,387 INFO:GET - /api/clubs
+2023-08-24 00:14:23,404 INFO:GET - /api/clubs
+2023-08-24 00:14:23,890 INFO:GET - /api/clubs
+2023-08-24 00:14:23,904 INFO:GET - /api/clubs
+2023-08-24 00:14:23,916 INFO:GET - /api/clubs
+2023-08-24 00:14:23,927 INFO:GET - /api/clubs

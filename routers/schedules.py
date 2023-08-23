@@ -23,15 +23,6 @@ router = APIRouter(
 동아리마다 관리자, 임원 리스트를 두고 검증해야겠다..
 단순히 숫자로 검증하는 것이 아닐 것 같다.
 """
-# 스케줄 관리 권한 확인 ( 수정, 추가, 삭제 ) ( 읽기 x )
-# def verify_schedule_management_authority(club_objid, user):
-#     # 현재 속해 있는 클럽(동아리)와 data(post, schedule)추가/수정 대상의 동아리 비교
-#     if not(club_objid in user.get("clubs")):
-#         raise HTTPException(status_code=400, detail="속해있는 동아리가 아닙니다.")
-#     return True
-#     # if user.get("authority") <= 2:
-#     #     return user
-
 
 
 @router.get('/api/user/schedule', description="날짜(start_datetime) 순서대로 정렬해서 데이터를 가져옴")
