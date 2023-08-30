@@ -17,14 +17,17 @@ get_bearer_token = HTTPBearer(auto_error=False)
 
 
 KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
-KAKAO_REDIRECT_URI = os.environ.get('KAKAO_REDIRECT_URI')
-KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=refresh_token&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI}&refresh_token="
+KAKAO_REDIRECT_URI_PRODUCTION = os.environ.get('KAKAO_REDIRECT_URI_PRODUCTION')
+KAKAO_REDIRECT_URI_DEVELOPMENT = os.environ.get('KAKAO_REDIRECT_URI_DEVELOPMENT')
+KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=refresh_token&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI_PRODUCTION}&refresh_token="
+KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=refresh_token&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI_PRODUCTION}&refresh_token="
 KAKAO_USERINFO_URL = 'https://kapi.kakao.com/v2/user/me'
 KAKAO_LOGOUT_URL = 'https://kapi.kakao.com/v1/user/logout'
 
 NAVER_CLIENT_ID = os.environ.get('NAVER_CLIENT_ID')
 NAVER_CLIENT_SECRET = os.environ.get('NAVER_CLIENT_SECRET')
-NAVER_REDIRECT_URI = os.environ.get('NAVER_REDIRECT_URI')
+NAVER_REDIRECT_URI_PRODUCTION = os.environ.get('NAVER_REDIRECT_URI_PRODUCTION')
+NAVER_REDIRECT_URI_DEVELOPMENT = os.environ.get('NAVER_REDIRECT_URI_DEVELOPMENT')
 NAVER_GET_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=refresh_token&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&refresh_token="
 NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
 NAVER_DELETE_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&service_provider=NAVER&access_token="

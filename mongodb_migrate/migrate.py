@@ -15,9 +15,9 @@ def notice_conversion():
     for notice in notices:
         # collection_notice.update_one({"_id": notice.get("_id")}, { "$unset": {"club_name": ''}})
         # collection_notice.update_one({"_id": notice.get("_id")}, { "$rename": {"user_id": 'user_objid'}})
-        # collection_notice.update_one({"_id": notice.get("_id")}, { "$rename": {"author": 'nickname'}})
+        collection_notice.update_one({"_id": notice.get("_id")}, { "$rename": {"nickname": 'realname'}})
         # collection_notice.update_one({"_id": notice.get("_id")}, { "$set": {"last_updated": ''}})
-        collection_notice.update_one({"_id": notice.get("_id")}, { "$currentDate": {"last_updated": True}})
+        # collection_notice.update_one({"_id": notice.get("_id")}, { "$currentDate": {"last_updated": True}})
 
 def club_migrate():
     collection_club.update_many({}, {"$set": { "president": []}})
@@ -61,5 +61,5 @@ def schedule_migrate():
 이 편지를 받은 사람은 행운이 깃들 것입니다. 힘들겠지만 좋은게 좋다고 생각하세요. 7년의 행운을 빌면서.."""}})
 
 if __name__ == "__main__":
-    users_migrate()
+    notice_conversion()
 

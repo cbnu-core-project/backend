@@ -6,5 +6,6 @@ class Notice(BaseModel):
 	title: str
 	content: str
 	user_objid: str
-	nickname: str
+	realname: str
 	last_updated: datetime | None = None
+

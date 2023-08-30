@@ -17,12 +17,12 @@ load_dotenv(dotenv_file)
 
 
 KAKAO_REST_API_KEY = os.environ.get('KAKAO_REST_API_KEY')
-KAKAO_REDIRECT_URI = os.environ.get('KAKAO_REDIRECT_URI')
-
+KAKAO_REDIRECT_URI_PRODUCTION = os.environ.get('KAKAO_REDIRECT_URI_PRODUCTION')
+KAKAO_REDIRECT_URI_DEVELOPMENT = os.environ.get('KAKAO_REDIRECT_URI_DEVELOPMENT')
+KAKAO_GET_TOKEN_URL_PRODUCTION = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI_PRODUCTION}&code="
+KAKAO_GET_TOKEN_URL_DEVELOPMENT = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI_DEVELOPMENT}&code="
 
 KAKAO_USERINFO_URL = 'https://kapi.kakao.com/v2/user/me'
-# + code 랑 같이 쓰여야 됨
-KAKAO_GET_TOKEN_URL = f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_REDIRECT_URI}&code="
 
 router = APIRouter(
 	tags=["kakao_oauth"]
@@ -32,6 +32,7 @@ class Code(BaseModel):
 	code: str
 
 def get_kakao_user_info(access_token):
+	print(access_token)
 	headers = {"Authorization": f"Bearer {access_token}"}
 	response = requests.get(KAKAO_USERINFO_URL, headers=headers,
 							# params={"property_keys": json.dumps(["kakao_account.email"])}
@@ -78,7 +79,7 @@ def kakao_user_register(user):
 def kakao_oauth(code: Code):
 	code = dict(code).get('code')
 	headers = { "Content-type": "application/x-www-form-urlencoded;charset=utf-8" }
-	response = requests.post(KAKAO_GET_TOKEN_URL + code, headers=headers).json()
+	response = requests.post(KAKAO_GET_TOKEN_URL_PRODUCTION + code, headers=headers).json()
 
 	access_token = response.get('access_token')
 	refresh_token = response.get('refresh_token')
@@ -110,3 +111,35 @@ def kakao_oauth(code: Code):
 async def protected(token: str = Depends(verify_and_get_kakao_token)):
 	print(get_kakao_user_info(token))
 	return {"message": f"Hello, user! Your token is {token}."}
+
+
+@router.post("/oauth/kakao/login/development")
+def kakao_oauth(code: Code):
+	print(KAKAO_REDIRECT_URI_DEVELOPMENT)
+	print(KAKAO_GET_TOKEN_URL_DEVELOPMENT)
+
+	code = dict(code).get('code')
+	headers = { "Content-type": "application/x-www-form-urlencoded;charset=utf-8" }
+	response = requests.post(KAKAO_GET_TOKEN_URL_DEVELOPMENT + code, headers=headers).json()
+
+	access_token = response.get('access_token')
+	refresh_token = response.get('refresh_token')
+	user_info = get_kakao_user_info(access_token)
+
+	# 이메일 유효성 검증
+	email = user_info.get('kakao_account').get('email')
+	is_email_valid = user_info.get('kakao_account').get('is_email_valid')
+	is_email_verified = user_info.get('kakao_account').get('is_email_verified')
+
+	if (not(is_email_valid) or not(is_email_verified)):
+		raise HTTPException(
+			status_code=401,
+			detail={"message": "유효하지 않거나 인증되지 않은 이메일"},
+			headers={"WWW-Authenticate": "Bearer"},
+		)
+
+	# 유저정보를 통한 회원가입
+	if (kakao_user_register(user_info)):
+		print("회원가입 완료")
+
+	return { "access_token": access_token, "refresh_token": refresh_token }

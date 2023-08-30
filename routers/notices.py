@@ -28,6 +28,12 @@ async def create_notice(notice: Notice):
 
 	return notice
 
+@router.put("/api/notice/{objid}", description="공지사항 수정하기")
+async def update_notice(objid: str, notice: Notice):
+	collection_notice.update_one({"_id": ObjectId(objid)}, { "$set" : dict(notice)})
+
+	return { "message": "업데이트 완료"}
+
 @router.delete("/api/notice/{objid}", description="공지사항 삭제하기 - ex) /api/post/123412 (삭제할 objectid) 경로로 'delete' 요청")
 async def delete_notice(objid: str):
 	collection_notice.delete_one({"_id": ObjectId(objid)})

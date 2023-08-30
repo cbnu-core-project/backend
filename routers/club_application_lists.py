@@ -3,7 +3,7 @@ from config.database import collection_club_application_list
 from models.club_application_lists_model import ClubApplicationList
 from schemas.others_schema import others_serializer
 from bson import ObjectId
-
+from pydantic import BaseModel
 
 router = APIRouter(
     tags=["club_application_lists"]
@@ -35,9 +35,23 @@ def put_club_application_list(objid: str, club_application_list: ClubApplication
     club_application_list = others_serializer(collection_club_application_list.find({"_id": ObjectId(objid)}))
     return club_application_list
 
-@router.delete("/api/club_application_lists/{objid}", description="동아리 별로 동아리 활동 내역 하나 삭제하기")
+@router.delete("/api/club_application_lists/one/{objid}", description="동아리 별로 동아리 활동 내역 하나 삭제하기")
 def delete_club_application_list(objid: str):
     collection_club_application_list.delete_one({"_id" : ObjectId(objid)})
+    return []
+
+class Delete_list(BaseModel):
+    objid_list: list[str]
+
+@router.delete("/api/club_application_lists/objid_list", description="활동내역 리스트를 주면 전부 삭제")
+def delete_objid_list(delete_list: Delete_list):
+    print("sadf")
+    list = dict(delete_list)['objid_list']
+
+    # 검색 조건 설정
+    query = {"$or": [{"_id": ObjectId(objid)} for objid in list]}
+
+    collection_club_application_list.delete_many(query)
     return []
 
 @router.post("/api/club_application_lists/approval", description="동아리 별로 동아리 활동 내역 하나 수정하기")

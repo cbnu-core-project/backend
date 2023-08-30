@@ -14,12 +14,13 @@ load_dotenv(dotenv_file)
 
 NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID")
 NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET")
-NAVER_REDIRECT_URI = os.environ.get("NAVER_REDIRECT_URI")
-
+NAVER_REDIRECT_URI_PRODUCTION = os.environ.get('NAVER_REDIRECT_URI_PRODUCTION')
+NAVER_REDIRECT_URI_DEVELOPMENT = os.environ.get('NAVER_REDIRECT_URI_DEVELOPMENT')
 
 NAVER_USERINFO_URL = "https://openapi.naver.com/v1/nid/me"
 # + code 랑 같이 쓰여야 됨
 NAVER_GET_TOKEN_URL = f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&state=naver&code="
+NAVER_GET_TOKEN_URL_DEVELOPMENT = f"https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id={NAVER_CLIENT_ID}&client_secret={NAVER_CLIENT_SECRET}&state=naver&code="
 
 
 
@@ -95,3 +96,19 @@ def kakao_oauth(code: Code):
 async def protected(token: str = Depends(verify_and_get_naver_token)):
 	print(get_naver_user_info(token))
 	return {"message": f"Hello, user! Your token is {token}."}
+
+
+@router.post("/oauth/naver/login/development")
+def kakao_oauth(code: Code):
+	code = dict(code).get('code')
+	response = requests.post(NAVER_GET_TOKEN_URL + code).json()
+
+	access_token = response.get('access_token')
+	refresh_token = response.get('refresh_token')
+
+	# 유저 정보를 통한 회원가입
+	user_info = get_naver_user_info(access_token)
+	if (user_register(user_info)):
+		print("회원가입 완료")
+
+	return { "access_token": access_token, "refresh_token": refresh_token }
