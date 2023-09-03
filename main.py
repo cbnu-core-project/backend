@@ -11,7 +11,7 @@ app = FastAPI()
 
 ##########################################################
 # CORS 설정 #
-origins = ["http://localhost:3000", "http://cbnucore.site"]
+origins = ["http://localhost:3000", "http://cbnucore.site", "https://arible.net"]
 
 app.add_middleware(
 	CORSMiddleware,
